@@ -27,7 +27,7 @@ clc
 lon = 0:1.875:358.125;
 
 % Define latitude vector (North-South position)  
-% Covers -90° (South Pole) to 87.63° (near North Pole) with 1.91° spacing
+% Covers -90 deg (South Pole) to 87.63 deg (near North Pole) with 1.91 deg spacing
 % This gives us 94 points from south to north
 lat = -90:1.91:87.63;
 
