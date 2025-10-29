@@ -1,0 +1,57 @@
+# MATLAB autosave files
+*.asv
+
+# MATLAB temporary files
+*.m~
+
+# MEX-files (compiled)
+*.mex
+*.mexw32
+*.mexw64
+*.mexa64
+*.mexmaci64
+*.mexmaca64
+
+# P-files (compiled MATLAB code)
+*.p
+
+# Simulink autosave
+*.autosave
+*.slxc
+slprj/
+
+# Code generation directories
+codegen/
+
+# Simulink cache
+*.slxc
+
+# MATLAB Project files
+*.prj
+
+# Profiler output
+profile_results/
+
+# Deployed applications
+*.ctf
+
+# MATLAB App Designer
+*.mlapp.bak
+
+# MATLAB Reports
+report_*/
+
+# MATLAB Data files (optional - uncomment if needed)
+# *.mat
+
+# Operating System files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editor backup files
+*~
+*.swp
+*.swo
+\#*\#
+.#*
