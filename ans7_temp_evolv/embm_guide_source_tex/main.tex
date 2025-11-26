@@ -1,0 +1,219 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{geometry}
+\usepackage{setspace}
+
+\geometry{margin=1in}
+\onehalfspacing
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.95}
+
+\lstdefinestyle{codestyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{blue}\bfseries,
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    frame=single
+}
+\lstset{style=codestyle}
+
+\title{\textbf{Zero-Dimensional Energy Balance Climate Model}}
+\author{Sandy H. S. Herho\\
+\small Department of Earth and Planetary Sciences\\
+\small University of California, Riverside}
+\date{November 25, 2025}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This document presents the zero-dimensional energy balance model for Earth's climate system, beginning from fundamental physical principles. We develop the simple mathematical framework, implement the model in both MATLAB and Python, discuss the underlying assumptions and limitations, and interpret the results in the context of Earth's geological history.
+\end{abstract}
+
+\vspace{1em}
+
+Understanding Earth's climate begins with a deceptively simple question: what determines the temperature of our planet? To answer this, we must recognize that Earth exists in a state of approximate energy balance with its environment. Energy continuously flows into the Earth system from the Sun, and energy continuously flows out into the cold vacuum of space. When these two flows are equal, the planet reaches a stable temperature. This fundamental insight forms the basis of energy balance climate modeling, one of the oldest and most instructive approaches to understanding planetary climate.
+
+The Sun, a massive ball of hydrogen and helium undergoing nuclear fusion at its core, radiates energy in all directions. A tiny fraction of this energy intercepts Earth, located approximately 150 million kilometers away. We quantify this incoming energy using the solar constant, denoted $S$, which represents the solar flux (power per unit area) measured at Earth's orbital distance. The present-day value of the solar constant is approximately $S_0 = 1368$ W/m$^2$. This number tells us that every square meter of surface oriented perpendicular to the Sun's rays receives 1368 watts of power.
+
+However, Earth is not a flat disk facing the Sun; it is a sphere. This geometric reality has consequences for how we calculate the average solar energy received. Consider that only one hemisphere of Earth faces the Sun at any given moment, and even within that hemisphere, the solar rays strike the surface at varying angles. At the equator near local noon, sunlight arrives nearly perpendicular to the surface, delivering maximum energy per unit area. Near the poles or at dawn and dusk, sunlight arrives at a glancing angle, spreading the same energy over a larger area.
+
+To derive the average solar flux received by Earth, we can use a geometric argument. The total power intercepted by Earth equals the solar constant multiplied by Earth's cross-sectional area as seen from the Sun, which is $\pi R^2$ where $R$ is Earth's radius. This intercepted power is then distributed over Earth's entire surface area, which is $4\pi R^2$. The ratio of these areas gives us the factor by which we must reduce the solar constant to obtain the global average:
+\begin{equation}
+\text{Average flux} = S \times \frac{\pi R^2}{4\pi R^2} = \frac{S}{4}
+\end{equation}
+
+This factor of four appears throughout climate science and represents the fundamental geometric relationship between a sphere and its circular cross-section.
+
+Not all incoming solar radiation is absorbed by Earth. A significant fraction is reflected back to space by clouds, ice sheets, deserts, and other reflective surfaces. We quantify this reflectivity using the albedo, denoted $\alpha$, which represents the fraction of incoming radiation that is reflected. Earth's average albedo is approximately $\alpha = 0.3$, meaning 30\% of incoming sunlight is reflected and only 70\% is absorbed. The fraction of radiation absorbed is therefore $(1 - \alpha)$.
+
+Combining these considerations, we can now write an expression for the incoming energy flux absorbed by Earth:
+\begin{equation}
+F_{\text{in}} = \frac{(1-\alpha) \cdot S}{4}
+\end{equation}
+
+This equation encapsulates the geometry of a spherical planet, the intensity of solar radiation, and the reflective properties of the planetary surface and atmosphere. For present-day Earth with $S = 1368$ W/m$^2$ and $\alpha = 0.3$, we calculate $F_{\text{in}} = (1-0.3) \times 1368 / 4 = 239.4$ W/m$^2$.
+
+Now we must consider how Earth loses energy. Any object with a temperature above absolute zero emits electromagnetic radiation, with hotter objects emitting more intensely and at shorter wavelengths. This relationship is codified in the Stefan-Boltzmann law, one of the foundational results of 19th-century physics. Josef Stefan discovered empirically in 1879, and Ludwig Boltzmann derived theoretically in 1884, that the total power radiated per unit area by a perfect emitter (a ``black body'') is proportional to the fourth power of its absolute temperature:
+\begin{equation}
+F = \sigma T^4
+\end{equation}
+
+Here, $\sigma = 5.67 \times 10^{-8}$ W/(m$^2\cdot$K$^4$) is the Stefan-Boltzmann constant, and $T$ is the temperature in Kelvin. The fourth-power dependence is remarkable and consequential: doubling the temperature increases the radiated power by a factor of sixteen.
+
+Earth, however, is not a perfect black body emitter. The presence of the atmosphere, particularly greenhouse gases like water vapor, carbon dioxide, and methane, complicates the picture. These gases are largely transparent to incoming solar radiation (which peaks in the visible spectrum) but absorb and re-emit outgoing thermal radiation (which peaks in the infrared). This greenhouse effect traps some of the outgoing energy, warming the surface beyond what a bare rock in space would achieve.
+
+We can incorporate this effect in a simplified manner by introducing an effective emissivity $\varepsilon$, a dimensionless number less than one that reduces the outgoing flux relative to a perfect black body. A commonly used value is $\varepsilon = 0.62$, which empirically captures the warming effect of Earth's atmosphere without explicitly modeling its complex radiative transfer. The outgoing energy flux then becomes:
+\begin{equation}
+F_{\text{out}} = \varepsilon \cdot \sigma \cdot T^4
+\end{equation}
+
+We now invoke the principle of energy balance. For Earth to maintain a stable temperature over time, the rate at which it absorbs energy must equal the rate at which it emits energy. If absorption exceeds emission, the planet warms; if emission exceeds absorption, the planet cools. At equilibrium:
+\begin{equation}
+F_{\text{in}} = F_{\text{out}}
+\end{equation}
+
+Substituting our expressions:
+\begin{equation}
+\frac{(1-\alpha) \cdot S}{4} = \varepsilon \cdot \sigma \cdot T^4
+\end{equation}
+
+This is the fundamental equation of the zero-dimensional energy balance model. We call it ``zero-dimensional'' because it treats Earth as a single point with a single temperature, ignoring all spatial variations in latitude, longitude, altitude, or any other dimension. Despite this extreme simplification, the model captures essential physics and provides valuable insights.
+
+To find the equilibrium temperature, we solve for $T$. First, we isolate $T^4$ by dividing both sides by $\varepsilon \cdot \sigma$:
+\begin{equation}
+T^4 = \frac{(1-\alpha) \cdot S}{4 \cdot \varepsilon \cdot \sigma}
+\end{equation}
+
+Then we take the fourth root of both sides:
+\begin{equation}
+T = \left[ \frac{(1-\alpha) \cdot S}{4 \cdot \varepsilon \cdot \sigma} \right]^{1/4}
+\end{equation}
+
+This equation gives us the equilibrium surface temperature in Kelvin. To convert to the more intuitive Celsius scale, we subtract 273.15 K. This calculation forms the core of the function \texttt{fun\_1} in both our MATLAB and Python implementations.
+
+Having established how to calculate temperature from the solar constant, we now turn to the question of how the solar constant itself has changed over Earth's 4.5-billion-year history. This brings us to stellar physics and the phenomenon of the ``faint young Sun.''
+
+Stars like our Sun generate energy through nuclear fusion in their cores, converting hydrogen into helium. As this process continues over billions of years, the core composition changes, the core contracts slightly, its temperature increases, and the rate of fusion accelerates. The net result is that the Sun has been gradually brightening since its formation. This is not speculation but a robust prediction of stellar evolution theory, confirmed by observations of other Sun-like stars at different stages of their lives.
+
+Douglas Gough formalized this relationship in 1981, providing an analytical approximation for how solar luminosity varies with time:
+\begin{equation}
+\frac{L(t)}{L_0} = \frac{1}{1 + \frac{2}{5}\left(1 - \frac{t}{t_0}\right)}
+\end{equation}
+
+In this equation, $L(t)$ is the solar luminosity at time $t$ (measured in billions of years since the Sun's formation), $L_0$ is the present-day luminosity, and $t_0 = 4.57$ Gyr is the current age of the Sun. Since the solar constant $S$ is directly proportional to luminosity, we can write the same relationship for $S$:
+\begin{equation}
+S(t) = \frac{S_0}{1 + \frac{2}{5}\left(1 - \frac{t}{t_0}\right)}
+\end{equation}
+
+Let us verify this equation at two important limits. At the present day, $t = t_0 = 4.57$ Gyr, so the term $(1 - t/t_0) = 0$, the denominator equals 1, and $S(t) = S_0$ as expected. At the time of the Sun's formation, $t = 0$, so $(1 - t/t_0) = 1$, the denominator equals $1 + 2/5 = 1.4$, and $S(t) = S_0/1.4 \approx 0.71 \times S_0$. This tells us that the young Sun was only about 71\% as bright as it is today, a remarkable and consequential fact. This calculation forms the core of the function \texttt{fun\_2} in our implementations.
+
+The computational implementation of this model is straightforward. In both MATLAB and Python, we create two functions corresponding to our two key equations, then write a main script that loops through geological time, calculates the solar constant at each time step, feeds it into the energy balance model, and stores the resulting temperatures for plotting.
+
+In MATLAB, the energy balance function appears as:
+
+\begin{lstlisting}[language=Matlab]
+function [temp] = fun_1(solar_constant, albedo)
+    sigma = 5.67E-8;
+    emissivity = 0.62;
+    temp_fourth = ((1 - albedo) * solar_constant) / (4 * emissivity * sigma);
+    temp_kelvin = temp_fourth^0.25;
+    temp = temp_kelvin - 273.15;
+end
+\end{lstlisting}
+
+The solar constant function is:
+
+\begin{lstlisting}[language=Matlab]
+function [St] = fun_2(t)
+    S_0 = 1368.0;
+    t_0 = 4.57;
+    denominator = 1 + (2/5) * (1 - t/t_0);
+    St = S_0 / denominator;
+end
+\end{lstlisting}
+
+In Python, these same functions appear with slightly different syntax:
+
+\begin{lstlisting}[language=Python]
+def fun_1(solar_constant, albedo):
+    sigma = 5.67e-8
+    emissivity = 0.62
+    temp_fourth = ((1 - albedo) * solar_constant) / (4 * emissivity * sigma)
+    temp_kelvin = temp_fourth ** 0.25
+    temp_celsius = temp_kelvin - 273.15
+    return temp_celsius
+
+def fun_2(t):
+    S_0 = 1368.0
+    t_0 = 4.57
+    denominator = 1 + (2/5) * (1 - t/t_0)
+    St = S_0 / denominator
+    return St
+\end{lstlisting}
+
+The main program loops through time from $t = 0$ (Sun's formation) to $t = 10$ Gyr (about 5.4 billion years in the future), calling these functions at each step and collecting results. The time axis is then transformed to be relative to the present day, making it easier to interpret: negative values represent the past, zero represents today, and positive values represent the future.
+
+Figure \ref{fig:result} shows the output of this model. The blue curve shows temperature evolution on the left axis, while the red dashed curve shows solar constant evolution on the right axis. The vertical dotted line marks the present day.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.95\textwidth]{earth_temperature_evolution.png}
+\caption{Evolution of Earth surface temperature (blue solid line, left axis) and solar constant (red dashed line, right axis) through geological time. The vertical dotted line marks the present day. Negative time values represent the past; positive values represent the future.}
+\label{fig:result}
+\end{figure}
+
+The results reveal something striking and historically important. According to our model, Earth's surface temperature 4 billion years ago was approximately $-6.5^\circ$C, well below the freezing point of water. The model predicts a frozen early Earth, locked in global ice cover. Yet this prediction contradicts overwhelming geological evidence. Ancient sedimentary rocks, some dating back 3.8 billion years, show clear signs of water erosion, ripple marks, and other features that could only form in the presence of liquid water. Fossil stromatolites, layered structures built by microbial communities in shallow water, date back at least 3.5 billion years. The message from the rocks is unambiguous: liquid water existed on early Earth, and life was thriving in it.
+
+This contradiction between model prediction and geological evidence is known as the ``Faint Young Sun Paradox,'' first clearly articulated by Carl Sagan and George Mullen in 1972. The paradox arises because our simple model is missing something important. The resolution lies in recognizing that Earth's atmosphere was very different in the past. Higher concentrations of greenhouse gases, particularly carbon dioxide and methane, would have enhanced the greenhouse effect far beyond what our constant $\varepsilon = 0.62$ captures. Some researchers estimate that CO$_2$ levels may have been 100 to 1000 times higher than today, providing enough warming to keep the oceans liquid despite the fainter Sun.
+
+This brings us to a critical discussion of the model's limitations, which illuminate both what the model can and cannot tell us about Earth's climate.
+
+The first and most fundamental limitation is the zero-dimensional assumption itself. By treating Earth as a single point with a single temperature, we completely ignore the spatial structure of climate. In reality, the equator is much warmer than the poles, summer is warmer than winter, day is warmer than night, and land behaves differently from ocean. These variations drive atmospheric and oceanic circulation, which redistributes heat around the planet. None of this physics appears in our model.
+
+The second limitation is our treatment of the greenhouse effect through a single constant emissivity. The real greenhouse effect depends on the concentrations of multiple gases, each with its own absorption spectrum, as well as clouds, aerosols, water vapor feedbacks, and complex radiative transfer through a vertically structured atmosphere. Our single parameter $\varepsilon = 0.62$ is calibrated to reproduce present-day conditions but has no mechanism to change when atmospheric composition changes.
+
+The third limitation is the assumption of instantaneous equilibrium. Our model calculates the temperature that would exist if the system had infinite time to adjust to a given solar constant. In reality, Earth has enormous thermal inertia, primarily due to the oceans, and responds to changes in forcing over decades to millennia. The dynamic, time-dependent behavior of climate is entirely absent from our equilibrium model.
+
+The fourth limitation concerns the albedo. We treat $\alpha = 0.3$ as a fixed constant, but albedo depends strongly on climate state. Ice and snow are highly reflective (high albedo), while ocean and vegetation are darker (low albedo). A warming world melts ice, reducing albedo, which causes more solar absorption, which causes more warming---a powerful positive feedback loop. Conversely, a cooling world grows ice, increases albedo, reflects more sunlight, and cools further. This ice-albedo feedback can drive dramatic climate transitions and is completely absent from our constant-albedo model.
+
+The fifth limitation is the neglect of internal climate variability and external forcings beyond solar luminosity. Volcanic eruptions inject aerosols that cool the planet. Continental drift changes ocean circulation patterns. Biological evolution has transformed atmospheric composition. Asteroid impacts have caused mass extinctions and climate perturbations. Our model captures none of this rich complexity.
+
+Despite these severe limitations, the zero-dimensional energy balance model remains valuable for several reasons. It provides physical intuition about the fundamental controls on planetary temperature. It correctly predicts the approximate present-day temperature of Earth (and can be applied to other planets). It quantifies the magnitude of the faint young Sun problem, setting the stage for more sophisticated investigations. And it serves as an excellent pedagogical tool, introducing students to climate modeling concepts without requiring advanced mathematics or computational resources.
+
+The model also correctly captures the qualitative trend of Earth's long-term future. As the Sun continues to brighten, Earth will warm. In approximately one billion years, the increased solar flux will likely trigger a runaway greenhouse effect, boiling the oceans and transforming Earth into a Venus-like world. Our model shows temperatures reaching nearly 60$^\circ$C five billion years from now, though long before that point, complex feedbacks not captured in our model will have fundamentally altered Earth's climate system.
+
+In summary, the zero-dimensional energy balance model presented here represents the simplest possible approach to understanding planetary climate. From the first principles of geometry, radiation physics, and stellar evolution, we have derived expressions for Earth's equilibrium temperature as a function of time. The model successfully reproduces present-day conditions but fails to explain how early Earth remained habitable despite a fainter Sun, revealing the importance of greenhouse gases and climate feedbacks. The limitations of the model are not failures but rather signposts pointing toward the additional physics needed in more complete climate models. For students beginning their study of climate science, this model provides an essential foundation upon which more sophisticated understanding can be built.
+
+\vspace{2em}
+
+\noindent\textbf{References}
+
+\vspace{0.5em}
+
+\noindent Gough, D.O. (1981). Solar interior structure and luminosity variations. \textit{Solar Physics}, 74, 21--34.
+
+\noindent Sagan, C., \& Mullen, G. (1972). Earth and Mars: Evolution of atmospheres and surface temperatures. \textit{Science}, 177, 52--56.
+
+\noindent Feulner, G. (2012). The faint young Sun problem. \textit{Reviews of Geophysics}, 50, RG2006.
+
+\end{document}
