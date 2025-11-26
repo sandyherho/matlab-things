@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 ===============================================================================
-SCRIPT: temp_evolv.py
+SCRIPT: main.py
 Evolution of Earth Surface Temperature Through Geological Time
 ===============================================================================
 Author:       Sandy H. S. Herho
